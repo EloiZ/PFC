@@ -31,13 +31,13 @@ public class TestsFinaux {
 			somme += resultat[k];
 
 		double moyenne = somme / tour;
-		System.out.println("score max moyen " + moyenne);
+		System.out.println("mean of the max score " + moyenne);
 		double somme1 = 0;
 		for (int k = 0; k < tour; k++)
 			somme1 += (resultat[k] - moyenne) * ((resultat[k]) - moyenne);
 		somme1 = somme1 / tour;
 		somme1 = Math.sqrt(somme1);
-		System.out.println("ecart type " + somme1);
+		System.out.println("variance " + somme1);
 	}
 
 	public static void test2(Population pop, Strategy adversaire, int nbtours,
@@ -56,15 +56,15 @@ public class TestsFinaux {
 		int n = nbtours;
 		STab S = population.population.keySet().iterator().next();
 
-		// Clonage de A
+		// Clonage of A
 		Strategy Aclone = A.clone();
 
 		Evolution E = new Evolution(population, A, S, selection, crossing,
 		                            mutation, n);
-		// Reinitialisation de A
+		// Reinitialisation of A
 		A = Aclone;
 
-		System.out.println(E.score + " = score de la meilleure");
+		System.out.println(E.score + " = score of the best");
 		System.out.println(E.best_strat);
 		System.out.println("");
 		STab best = E.best_strat;
@@ -72,22 +72,22 @@ public class TestsFinaux {
 			S = best.clone();
 			population = E.population;
 
-			// Clonage de A
+			// Clonage of A
 			Aclone = A.clone();
 
 			E = new Evolution(population, A, S, selection, crossing,
 			                  mutation, n);
-			// Reinitialisation de A
+			// Reinitialisation of A
 
 			A = Aclone;
 
 			System.out.println("");
 			int comparison = STab.comparison(E.best_strat, best);
 			System.out.println(i + 1);
-			System.out.println(E.score + " = score de la meilleure");
+			System.out.println(E.score + " = score of the best");
 			System.out
 			.println(comparison
-			         + " = nombre de cases changées par rapport à la stratégie précédente");
+			         + " = number of elements changed in comparison of the previous strategy");
 			best = E.best_strat;
 			ffw.write(E.score + ";");
 			ffw.write(Integer.toString(comparison));

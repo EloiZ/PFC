@@ -25,7 +25,7 @@ public class Population {
 		int value = this.population.get(s);
 		this.population.put(s, value + i);
 		if (i == -1)
-			s.defaite++;
+			s.loss++;
 	}
 
 	// Function to sort an array (mergesort)

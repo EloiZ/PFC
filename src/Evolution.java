@@ -4,102 +4,103 @@ import java.util.Random;
 public class Evolution {
 
 	public Population population;
-	public STab[] classement;
+	public STab[] ranking;
 	public int score;
-	public STab beststrat;
+	public STab best_strat;
 
-	public Evolution(Population population, Strategie A, STab S,
-			double selection, double croisement, double mutation, int n) {
+	public Evolution(Population population, Strategy A, STab S,
+	                 double selection, double crossing, double mutation, int n) {
 
-		
-		int nbrestrat = population.population.size();
-		//Evaluation de la population initiale
-		
+
+		int nb_strat = population.population.size();
+		// Evaluation of the initial population
+
 		new EvaluationPopulation(A, S, population, n);
 
-		// classement des stratégies selon leur score (ordre croissant)
-		STab[] tab = new STab[nbrestrat];
+		// Ranking of the strategies according the score (increasing order)
+		STab[] tab = new STab[nb_strat];
 		int i = 0;
 		for (STab s : population.population.keySet()) {
 			tab[i] = s;
 			i++;
 		}
-		
-		tab = population.tri(tab);
-		
-		this.classement = tab;
-		
-		this.beststrat = tab[nbrestrat -1].clone();
-		this.score = population.population.get(tab[nbrestrat-1]);
-		
-		// création de la nouvelle population
+
+		tab = population.sort(tab);
+
+		this.ranking = tab;
+
+		this.best_strat = tab[nb_strat - 1].clone();
+		this.score = population.population.get(tab[nb_strat - 1]);
+
+		// Creation of the new population
 		LinkedList<STab> l = new LinkedList<STab>();
-		
-		// Remplisage de la nouvelle population : sélection des meilleures stratégies
-		int nbreselection = (int) (selection * nbrestrat);
-		for (int j = nbrestrat-1; j > nbrestrat - nbreselection - 1; j--)
-			l.add(tab[j].clone()); //le clonage permet de reset le tableau des derniers coups
-		
-		// Remplissage de la nouvelle population : croisement + mutation
-		int croise = (int) (croisement * (nbrestrat - nbreselection));
+
+		// The new population is being filled : selection of the best strategies
+		int nb_selection = (int) (selection * nb_strat);
+		for (int j = nb_strat - 1; j > nb_strat - nb_selection - 1; j--)
+
+			// The clonning operation resets the last moves array
+			l.add(tab[j].clone());
+
+		// The new population is being filled : crossing + mutation
+		int croise = (int) (crossing * (nb_strat - nb_selection));
 		for (int j = 0; j < croise; j++) {
-			int random = (int) (Math.random() * nbreselection);
-			int random2 = (int) (Math.random() * nbreselection);
-			STab s1 = tab[nbrestrat - random - 1];
-			STab s2 = tab[nbrestrat - random2 - 1];
-			STab s = Croisement(s1, s2);
+			int random = (int) (Math.random() * nb_selection);
+			int random2 = (int) (Math.random() * nb_selection);
+			STab s1 = tab[nb_strat - random - 1];
+			STab s2 = tab[nb_strat - random2 - 1];
+			STab s = Crossing(s1, s2);
 			s = Mutation(s, mutation);
 			l.add(s.clone());
 		}
-		
-		// Remplissage de la nouvelle population : mutation uniquement
-		for (int j = 0; j < nbrestrat - croise - nbreselection; j++) {
-			int random = (int) (Math.random() * nbreselection);
-			STab s = tab[nbrestrat - random - 1];
+
+		// The new population is being filled : mutation only
+		for (int j = 0; j < nb_strat - croise - nb_selection; j++) {
+			int random = (int) (Math.random() * nb_selection);
+			STab s = tab[nb_strat - random - 1];
 			s = Mutation(s, mutation);
 			l.add(s.clone());
 		}
+
+		// Reset of A
 		this.population = new Population(l);
-		
-		//Réinitialisation de A
 	}
 
-	// effectue le croisement entre deux strategies, recopie les p premiers case
-	// de l'une, et les 30 - p dernieres cases de l'autre pour former une
-	// nouvelle stratégie
-	public static STab Croisement(STab s1, STab s2) {
-		byte[] t = new byte[3 + 4 + STab.Puissance(3,s1.tourmemoire)];
-		int p = (new Random()).nextInt(3 + 4 + STab.Puissance(3,s1.tourmemoire));
-		for (int i = 0; i < 3 + 4 + STab.Puissance(3,s1.tourmemoire); i++) {
+	// Make the crossing between two strategies, copy the p first elements of the one
+	// and the 30 - p last elements of the other to form a new strategy
+	public static STab Crossing(STab s1, STab s2) {
+		byte[] t = new byte[3 + 4 + STab.Exponent(3, s1.memory)];
+		int p = (new Random()).nextInt(3 + 4 + STab.Exponent(3, s1.memory));
+		for (int i = 0; i < 3 + 4 + STab.Exponent(3, s1.memory); i++) {
 			if (i < p)
-				t[i] = s1.strategie[i];
+				t[i] = s1.strategy[i];
 			else
-				t[i] = s2.strategie[i];
+				t[i] = s2.strategy[i];
 		}
-		STab s = new STab(t,s1.tourmemoire,s1.alpha);
+		STab s = new STab(t, s1.memory, s1.alpha);
 		return s;
 	}
 
-	// mute chaque case d'une strategie avec une probabilité "mutation"
+	// Mutate each element of a strategy with a propability "mutation"
 	public static STab Mutation(STab s, double mutation) {
-		byte[] t = new byte[3 + 4 + STab.Puissance(3,s.tourmemoire)];
-		for (int i = 0; i < 3 + 4 + STab.Puissance(3,s.tourmemoire); i++) {
+		byte[] t = new byte[3 + 4 + STab.Exponent(3, s.memory)];
+		for (int i = 0; i < 3 + 4 + STab.Exponent(3, s.memory); i++) {
 			double random = Math.random();
 			if (random <= mutation / 2.0)
-				t[i] = (byte) ((s.strategie[i] + 1) % 3);
+				t[i] = (byte) ((s.strategy[i] + 1) % 3);
 			else if (random > mutation / 2.0 && random <= mutation)
-				t[i] = (byte) ((s.strategie[i] + 2) % 3);
+				t[i] = (byte) ((s.strategy[i] + 2) % 3);
 			else
-				t[i] = s.strategie[i];
+				t[i] = s.strategy[i];
 		}
-		STab s1 = new STab(t,s.tourmemoire,s.alpha);
+		STab s1 = new STab(t, s.memory, s.alpha);
 		return s1;
 	}
 
 	public static void main(String[] args) {
-		Population p = new Population(20,3,0.0012);
-		Evolution E = new Evolution(p, new STab(4,0.0012), new STab(4,0.0012), 0.5, 0.2, 0.01,
-				100);
+		Population p = new Population(20, 3, 0.0012);
+		Evolution E = new Evolution(p, new STab(4, 0.0012), new STab(4, 0.0012), 0.5, 0.2, 0.01,
+		                            100);
 		System.out.println(E.population);
 	}
 

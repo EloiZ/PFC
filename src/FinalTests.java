@@ -3,25 +3,25 @@ import java.io.*;
 public class TestsFinaux {
 
 	public static void test1(Population pop, int nbtours, Parametre parametre,
-			int tour, int j) {
+	                         int tour, int j) {
 		Population population = pop;
 		int generation = parametre.generation;
 		double selection = parametre.selection;
-		double croisement = parametre.croisement;
+		double crossing = parametre.crossing;
 		double mutation = parametre.mutation;
 		int n = nbtours;
 		double[] resultat = new double[tour];
 		for (int k = 0; k < tour; k++) {
-			Strategie A = new STab(3,0.0);
+			Strategy A = new STab(3, 0.0);
 			STab S = population.population.keySet().iterator().next();
 			Evolution E = new Evolution(population, A, S, selection,
-					croisement, mutation, n);
+			                            crossing, mutation, n);
 			for (int i = 0; i < generation - 1; i++) {
 
-				S = E.classement[E.classement.length - 1];
+				S = E.ranking[E.ranking.length - 1];
 				population = E.population;
-				E = new Evolution(population, A, S, selection, croisement,
-						mutation, n);
+				E = new Evolution(population, A, S, selection, crossing,
+				                  mutation, n);
 			}
 			// new EvaluationPopulation(A, S, population, n);
 			resultat[k] = E.score;
@@ -40,34 +40,34 @@ public class TestsFinaux {
 		System.out.println("ecart type " + somme1);
 	}
 
-	public static void test2(Population pop, Strategie adversaire, int nbtours,
-			Parametre parametre) throws IOException {
+	public static void test2(Population pop, Strategy adversaire, int nbtours,
+	                         Parametre parametre) throws IOException {
 
 		File ff = new File("C:/CombatSTab.csv");
 		ff.createNewFile();
 		FileWriter ffw = new FileWriter(ff);
 
 		Population population = pop;
-		Strategie A = adversaire;
+		Strategy A = adversaire;
 		int generation = parametre.generation;
 		double selection = parametre.selection;
-		double croisement = parametre.croisement;
+		double crossing = parametre.crossing;
 		double mutation = parametre.mutation;
 		int n = nbtours;
 		STab S = population.population.keySet().iterator().next();
 
 		// Clonage de A
-		Strategie Aclone = A.clone();
+		Strategy Aclone = A.clone();
 
-		Evolution E = new Evolution(population, A, S, selection, croisement,
-				mutation, n);
+		Evolution E = new Evolution(population, A, S, selection, crossing,
+		                            mutation, n);
 		// Reinitialisation de A
 		A = Aclone;
 
 		System.out.println(E.score + " = score de la meilleure");
-		System.out.println(E.beststrat);
+		System.out.println(E.best_strat);
 		System.out.println("");
-		STab best = E.beststrat;
+		STab best = E.best_strat;
 		for (int i = 0; i < generation - 1; i++) {
 			S = best.clone();
 			population = E.population;
@@ -75,22 +75,22 @@ public class TestsFinaux {
 			// Clonage de A
 			Aclone = A.clone();
 
-			E = new Evolution(population, A, S, selection, croisement,
-					mutation, n);
+			E = new Evolution(population, A, S, selection, crossing,
+			                  mutation, n);
 			// Reinitialisation de A
 
 			A = Aclone;
 
 			System.out.println("");
-			int comparaison = STab.comparaison(E.beststrat, best);
+			int comparison = STab.comparison(E.best_strat, best);
 			System.out.println(i + 1);
 			System.out.println(E.score + " = score de la meilleure");
 			System.out
-					.println(comparaison
-							+ " = nombre de cases changées par rapport à la stratégie précédente");
-			best = E.beststrat;
+			.println(comparison
+			         + " = nombre de cases changées par rapport à la stratégie précédente");
+			best = E.best_strat;
 			ffw.write(E.score + ";");
-			ffw.write(Integer.toString(comparaison));
+			ffw.write(Integer.toString(comparison));
 			ffw.write("\n");
 		}
 		new EvaluationPopulation(A, S, population, n);
@@ -98,12 +98,12 @@ public class TestsFinaux {
 	}
 
 	public static void main(String[] args) throws IOException {
-		Population p = new Population(50,5,0.0);
-		// Strategie A = new Cycle(5);
+		Population p = new Population(50, 5, 0.0);
+		// Strategy A = new Cycle(5);
 		//STab A = new STab();
-		// Strategie A = new Demande();
-		Strategie A = new STab(3,0.0);
-		// Strategie A = new Hasard(2.0/3.0, 1.0/3.0, 0.0);
+		// Strategy A = new Ask();
+		Strategy A = new STab(3, 0.0);
+		// Strategy A = new Random(2.0/3.0, 1.0/3.0, 0.0);
 		// System.out.println(A);
 		test2(p, A, 50, new Parametre(0.5, 0.2, 0.01, 1000));
 		//test1(p, 50, new Parametre(0.5, 0.2, 0.01, 2000), 1, 0);

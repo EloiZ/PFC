@@ -1,44 +1,49 @@
 public class EvaluationPopulation {
 
-	// n est le nombre de tour
-	// Fais combattre la stratégie A contre la stratégie S. Regarde a chaque
-	// fois le score que les autres stratégies auraient fait.
-	public EvaluationPopulation(Strategie A, STab S, Population P, int n) {
-		for (int i = 0; i < n; i++) { // Pour chaque tour de jeu
-			byte coupa = A.Coup();
-			byte coups = S.Coup();
-			for (STab s1 : P.population.keySet()) { // Pour chaque stratégie s1
-													// dans la HashMap
-													// population
-				byte coup1 = s1.Coup();
-				if (coupa + coup1 == 1) {
-					if (coupa == 0)
-						P.ChangerScore(s1, 1);
+	// n in the number of round
+	// Set a fight between strategy A and strategy S. At every stem, it
+	// looks at the score the other strategy would have done.
+	public EvaluationPopulation(Strategy A, STab S, Population P, int n) {
+		// Loops over every round
+		for (int i = 0; i < n; i++) {
+			byte move_a = A.Move();
+			byte moves = S.Move();
+
+			// Loops over the strategy s1 in the population HashMap
+			for (STab s1 : P.population.keySet()) {
+				byte move_1 = s1.Move();
+				if (move_a + move_1 == 1) {
+					if (move_a == 0)
+						P.ChangeScore(s1, 1);
 					else
-						P.ChangerScore(s1, -1);
-				} else if (coupa + coup1 == 2) {
-					if (coupa == 0)
-						P.ChangerScore(s1, -1);
-					else if (coupa == 2)
-						P.ChangerScore(s1, 1);
-				} else if (coupa + coup1 == 3) {
-					if (coupa == 1)
-						P.ChangerScore(s1, 1);
+						P.ChangeScore(s1, -1);
+				} else if (move_a + move_1 == 2) {
+					if (move_a == 0)
+						P.ChangeScore(s1, -1);
+					else if (move_a == 2)
+						P.ChangeScore(s1, 1);
+				} else if (move_a + move_1 == 3) {
+					if (move_a == 1)
+						P.ChangeScore(s1, 1);
 					else
-						P.ChangerScore(s1, -1);
+						P.ChangeScore(s1, -1);
 				}
-				s1 = s1.Next(coupa); // mise a jour de s1 en fonction du coup
-										// joué par A
+				// Update s1 in function of the move played by A
+				s1 = s1.Next(move_a);
 			}
-			S = S.Next(coupa); // mise a jour de S
-			A = A.Next(coups); // mise a jour de A
+
+			// Update of S
+			S = S.Next(move_a);
+
+			// Update of A
+			A = A.Next(moves);
 		}
 	}
 
 	public static void main(String[] args) {
-		Population p = new Population(30,3,0.005);
+		Population p = new Population(30, 3, 0.005);
 		System.out.println(p.toString());
-		new EvaluationPopulation(new STab(6,0.0012), new STab(3,0.0012), p, 2000);
+		new EvaluationPopulation(new STab(6, 0.0012), new STab(3, 0.0012), p, 2000);
 		System.out.println(p.toString());
 	}
 }

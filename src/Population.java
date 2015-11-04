@@ -4,7 +4,7 @@ import java.util.LinkedList;
 public class Population {
 	public HashMap<STab, Integer> population;
 
-	//constructeur avec une linkedlist de strategies
+	// Constructor with a linkelist of strategies
 	public Population(LinkedList<STab> list) {
 		HashMap<STab, Integer> hashmap = new HashMap<STab, Integer>();
 		while (!list.isEmpty())
@@ -12,35 +12,35 @@ public class Population {
 		this.population = hashmap;
 	}
 
-	//constructeur aléatoire en fonction de la taille de la population voulue
-	public Population(int taille, int tourmemoire, double alpha) {
+	// Random constructor given the size of the population wanted
+	public Population(int taille, int memory, double alpha) {
 		HashMap<STab, Integer> hashmap = new HashMap<STab, Integer>();
 		for (int i = 0; i < taille; i++)
-			hashmap.put(new STab(tourmemoire, alpha), 0);
+			hashmap.put(new STab(memory, alpha), 0);
 		this.population = hashmap;
 	}
 
-	//change le score d'une stratégie : +1 si elle gagne, -1 si elle perd
-	public void ChangerScore(STab s, int i) {
+	// Change the score of a strategy : +1 if it wins, -1 if if loses
+	public void ChangeScore(STab s, int i) {
 		int value = this.population.get(s);
 		this.population.put(s, value + i);
-		if (i==-1)
+		if (i == -1)
 			s.defaite++;
 	}
 
-	//fonction pour trier un tableau (mergesort technique)
-	public STab[] tri(STab[] tab) {
+	// Function to sort an array (mergesort)
+	public STab[] sort(STab[] tab) {
 		if (tab.length == 1)
 			return tab;
 		int m = tab.length / 2;
 		STab[] tabg = soustableau(tab, 0, m);
 		STab[] tabd = soustableau(tab, m, tab.length);
-		tabg = tri(tabg);
-		tabd = tri(tabd);
+		tabg = sort(tabg);
+		tabd = sort(tabd);
 		return fusion(tabg, tabd);
 	}
 
-	//fonction auxiliaire de tri de tableau
+	// Auxilary function to sort an array
 	public STab[] soustableau(STab[] tab, int g, int d) {
 		STab[] s = new STab[d - g];
 		for (int i = g; i < d; i++)
@@ -48,7 +48,7 @@ public class Population {
 		return s;
 	}
 
-	//fonction auxiliaire de tri de tableau
+	// Auxilary function to sort an array
 	public STab[] fusion(STab[] tabg, STab[] tabd) {
 		STab[] f = new STab[tabg.length + tabd.length];
 		int g = 0, d = 0;
@@ -59,7 +59,7 @@ public class Population {
 				f[k] = tabg[g++];
 			else {
 				if (this.population.get(tabg[g]) <= this.population
-						.get(tabd[d]))
+				        .get(tabd[d]))
 					f[k] = tabg[g++];
 				else
 					f[k] = tabd[d++];
@@ -68,7 +68,7 @@ public class Population {
 		return f;
 	}
 
-	//fonction toString() pour afficher les stratégies et leurs score
+	// Overload of the to_String() function to print strategies and their score
 	public String toString() {
 		String string = "";
 		int i = 0;

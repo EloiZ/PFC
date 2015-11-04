@@ -1,5 +1,5 @@
-public interface Strategie{
-	public byte Coup();
-	public Strategie Next(byte coupadversaire);
-	public Strategie clone();
+public interface Strategy {
+	public byte Move();
+	public Strategy Next(byte oponent_move);
+	public Strategy clone();
 }

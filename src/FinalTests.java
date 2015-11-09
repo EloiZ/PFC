@@ -43,10 +43,6 @@ public class TestsFinaux {
 	public static void test2(Population pop, Strategy adversaire, int nbtours,
 	                         Parametre parametre) throws IOException {
 
-		File ff = new File("C:/CombatSTab.csv");
-		ff.createNewFile();
-		FileWriter ffw = new FileWriter(ff);
-
 		Population population = pop;
 		Strategy A = adversaire;
 		int generation = parametre.generation;
@@ -89,23 +85,19 @@ public class TestsFinaux {
 			.println(comparison
 			         + " = number of elements changed in comparison of the previous strategy");
 			best = E.best_strat;
-			ffw.write(E.score + ";");
-			ffw.write(Integer.toString(comparison));
-			ffw.write("\n");
 		}
 		new EvaluationPopulation(A, S, population, n);
-		ffw.close();
 	}
 
 	public static void main(String[] args) throws IOException {
-		Population p = new Population(50, 5, 0.0);
+		Population p = new Population(200, 3, 0.0);
 		// Strategy A = new Cycle(5);
-		//STab A = new STab();
-		// Strategy A = new Ask();
-		Strategy A = new STab(3, 0.0);
+		// STab A = new STab();
+		Strategy A = new Ask();
+		// Strategy A = new STab(3, 0.0);
 		// Strategy A = new Random(2.0/3.0, 1.0/3.0, 0.0);
 		// System.out.println(A);
-		test2(p, A, 50, new Parametre(0.5, 0.2, 0.01, 1000));
+		test2(p, A, 20, new Parametre(0.5, 0.2, 0.01, 300));
 		//test1(p, 50, new Parametre(0.5, 0.2, 0.01, 2000), 1, 0);
 	}
 }
